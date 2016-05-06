@@ -1,0 +1,7 @@
+#ifndef _KTAIL_CONFIG_H_
+#define _KTAIL_CONFIG_H_
+
+#cmakedefine HAVE_KQUEUE @HAVE_KQUEUE@
+#cmakedefine HAVE_INOTIFY @HAVE_INOTIFY@
+
+#endif /* _KTAIL_CONFIG_H_ */
