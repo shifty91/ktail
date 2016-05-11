@@ -265,6 +265,7 @@ int ktail_read_and_print(struct ktail_context *ctx)
         ctx->bytes++;
         printf("%c", c);
     }
+    fflush(stdout);
     if (ferror(ctx->f)) {
         skperr("fgetc() failed");
         return -EIO;
@@ -285,4 +286,5 @@ void ktail_print(struct ktail_context *ctx)
 
     for (size_t i = start; i < start + lines; ++i)
         printf("%s\n", ctx->data[i % config.n]);
+    fflush(stdout);
 }
