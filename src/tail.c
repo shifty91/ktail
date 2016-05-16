@@ -99,6 +99,8 @@ int ktail_wait(struct ktail_context *ctx)
     while (42) {
         nev = kevent(ctx->kq, &ctx->change, 1, &event, 1, NULL);
         if (nev < 0) {
+            if (errno == EINTR)
+                return 0;
             skperr("kevent() failed");
             return -ENOMEM;
         }
@@ -115,6 +117,8 @@ int ktail_wait(struct ktail_context *ctx)
 
         rc = read(ctx->fd, buf, BUF_SIZE);
         if (rc == -1 || rc == 0) {
+            if (errno == EINTR)
+                return 0;
             skperr("Failed to read from inotify fd");
             return -EIO;
         }
@@ -137,6 +141,8 @@ int ktail_wait(struct ktail_context *ctx)
 
         /* zZz */
         if (usleep(500)) {
+            if (errno == EINTR)
+                return 0;
             skperr("usleep() failed");
             return -EINTR;
         }

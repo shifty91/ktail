@@ -22,7 +22,7 @@ static void print_usage_and_die(void)
     fprintf(stderr, "options:\n");
     fprintf(stderr, "  --number, -n <lines>: last <lines> lines\n");
     fprintf(stderr, "  --follow, -f: follow output\n");
-    fprintf(stderr, "Copyright (C) 2016 Kurt Kanzenbach <kurt@kmk-computers.de>\n");
+    fprintf(stderr, "Ktail version 1.1, Copyright (C) 2016 Kurt Kanzenbach <kurt@kmk-computers.de>\n");
 
     exit(EXIT_FAILURE);
 }
