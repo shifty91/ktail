@@ -1,5 +1,5 @@
-#ifndef _TAIL_H_
-#define _TAIL_H_
+#ifndef _KTAIL_H_
+#define _KTAIL_H_
 
 #include "ktail_config.h"
 
@@ -41,4 +41,4 @@ void ktail_print(struct ktail_context *ctx);
 int ktail_wait_init(struct ktail_context *ctx);
 void ktail_wait_close(struct ktail_context *ctx);
 
-#endif /* _TAIL_H_ */
+#endif /* _KTAIL_H_ */

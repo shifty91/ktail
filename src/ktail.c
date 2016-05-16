@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <limits.h>
 
-#include "tail.h"
+#include "ktail.h"
 
 #include "utils.h"
 #include "config.h"

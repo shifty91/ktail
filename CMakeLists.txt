@@ -5,7 +5,7 @@ set(SRCS
   src/main.c
   src/utils.c
   src/config.c
-  src/tail.c
+  src/ktail.c
 )
 
 # checks

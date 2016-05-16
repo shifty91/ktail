@@ -6,7 +6,7 @@
 
 #include "config.h"
 #include "utils.h"
-#include "tail.h"
+#include "ktail.h"
 
 static volatile int stop;
 
