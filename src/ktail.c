@@ -13,6 +13,7 @@
 #include "config.h"
 #include "ktail_config.h"
 
+#define SLEEP_INTERVALL 500
 #define MAX_LINE (sysconf(_SC_LINE_MAX) + 1)
 #ifdef HAVE_INOTIFY
 #define BUF_SIZE (1 * sizeof(struct inotify_event))
@@ -140,7 +141,7 @@ int ktail_wait(struct ktail_context *ctx)
             break;
 
         /* zZz */
-        if (usleep(500)) {
+        if (usleep(SLEEP_INTERVALL)) {
             if (errno == EINTR)
                 return 0;
             skperr("usleep() failed");
