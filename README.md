@@ -2,7 +2,7 @@
 
 My own tail implementation. Supports -f flag. This tool runs on Linux and FreeBSD.
 
-Ktail tries to use kqueue or inotify for handling the following options. If both
+Ktail tries to use `kqueue` or `inotify` for handling the follow option. If both
 mechanisms are not available then polling with `sleep` is used.
 
 # Build #
