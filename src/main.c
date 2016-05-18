@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 {
     char *number_str = NULL;
     long n = 1000;
-    int c;
+    int c, res;
 
     /* get args */
     while ((c = getopt_long(argc, argv, "n:f", long_options, NULL)) != -1) {
@@ -143,12 +143,10 @@ int main(int argc, char *argv[])
 
     /* print tail */
     if (config.f_flag) {
-        if (ktail_with_follow())
-            return EXIT_FAILURE;
+        res = ktail_with_follow();
     } else {
-        if (ktail())
-            return EXIT_FAILURE;
+        res = ktail();
     }
 
-    return EXIT_SUCCESS;
+    return res ? EXIT_FAILURE : EXIT_SUCCESS;
 }
