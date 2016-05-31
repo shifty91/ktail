@@ -12,8 +12,8 @@ static volatile int stop;
 
 static struct option long_options[] = {
     { "number", required_argument, NULL, 'n' },
-    { "follow", required_argument, NULL, 'f' },
-    { NULL    , 0                , NULL, 0   }
+    { "follow", no_argument      , NULL, 'f' },
+    { NULL    , 0                , NULL,  0  }
 };
 
 static void print_usage_and_die(void)
