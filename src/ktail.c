@@ -278,7 +278,7 @@ int ktail_read_and_print(struct ktail_context *ctx)
     return 0;
 }
 
-void ktail_print(struct ktail_context *ctx)
+void ktail_print(const struct ktail_context *ctx)
 {
     if (!ctx) {
         perr("NULL pointer passed to '%s'", __func__);

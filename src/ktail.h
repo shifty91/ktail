@@ -37,7 +37,7 @@ void ktail_close(struct ktail_context *ctx);
 int ktail_read(struct ktail_context *ctx);
 int ktail_read_and_print(struct ktail_context *ctx);
 int ktail_wait(struct ktail_context *ctx);
-void ktail_print(struct ktail_context *ctx);
+void ktail_print(const struct ktail_context *ctx);
 int ktail_wait_init(struct ktail_context *ctx);
 void ktail_wait_close(struct ktail_context *ctx);
 
