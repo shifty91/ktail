@@ -24,7 +24,7 @@ struct ktail_context *ktail_init(void)
     /* allocate memory only once! */
     struct ktail_context *ctx = (struct ktail_context *)kzmalloc(sizeof(*ctx));
 
-    ctx->data = (char **)kmalloc(sizeof(char *) * config.n);
+    ctx->data = (char **)kmalloc_array(sizeof(char *), config.n);
 
     for (size_t i = 0; i < config.n; ++i)
         ctx->data[i] = (char *)kmalloc(MAX_LINE);

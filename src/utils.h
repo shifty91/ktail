@@ -67,6 +67,9 @@
 /* memory allocations */
 void *kmalloc(size_t size);
 void *kzmalloc(size_t size);
+void *kmalloc_array(size_t nb, size_t size);
+void *kzmalloc_array(size_t nb, size_t size);
+
 #define kfree(ptr)                                                      \
     do {                                                                \
         free(ptr);                                                      \
