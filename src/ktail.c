@@ -19,15 +19,14 @@
 #define BUF_SIZE (1 * sizeof(struct inotify_event))
 #endif
 
+#define IDX(line, off)                          \
+    ((line) * MAX_LINE + (off))
+
 struct ktail_context *ktail_init(void)
 {
     /* allocate memory only once! */
     struct ktail_context *ctx = (struct ktail_context *)kzmalloc(sizeof(*ctx));
-
-    ctx->data = (char **)kmalloc_array(sizeof(char *), config.n);
-
-    for (size_t i = 0; i < config.n; ++i)
-        ctx->data[i] = (char *)kmalloc(MAX_LINE);
+    ctx->data = (char *)kmalloc_array(MAX_LINE, config.n);
 
     return ctx;
 }
@@ -39,8 +38,6 @@ void ktail_free(struct ktail_context *ctx)
         return;
     }
 
-    for (size_t i = 0; i < config.n; ++i)
-        kfree(ctx->data[i]);
     kfree(ctx->data);
     kfree(ctx);
 }
@@ -240,12 +237,12 @@ int ktail_read(struct ktail_context *ctx)
         }
 
         if (c == '\n') {
-            ctx->data[ctx->line_counter % config.n][off] = '\0';
+            ctx->data[IDX(ctx->line_counter % config.n, off)] = '\0';
             off = 0;
             ctx->line_counter++;
             continue;
         }
-        ctx->data[ctx->line_counter % config.n][off++] = c;
+        ctx->data[IDX(ctx->line_counter % config.n, off++)] = c;
     }
     if (ferror(ctx->f)) {
         skperr("fgetc() failed");
@@ -254,7 +251,7 @@ int ktail_read(struct ktail_context *ctx)
 
     /* deal with last line */
     if (off != 0)
-        ctx->data[ctx->line_counter % config.n][off] = '\0';
+        ctx->data[IDX(ctx->line_counter % config.n, off)] = '\0';
 
     return 0;
 }
@@ -292,6 +289,6 @@ void ktail_print(struct ktail_context *ctx)
     size_t start = ctx->line_counter >= config.n ? ctx->line_counter : 0;
 
     for (size_t i = start; i < start + lines; ++i)
-        printf("%s\n", ctx->data[i % config.n]);
+        printf("%s\n", ctx->data + IDX(i % config.n, 0));
     fflush(stdout);
 }

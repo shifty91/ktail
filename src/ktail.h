@@ -13,7 +13,7 @@
 
 struct ktail_context {
     FILE *f;
-    char **data;
+    char *data;
     size_t line_counter;
     size_t bytes;
 #ifdef HAVE_KQUEUE
