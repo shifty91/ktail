@@ -79,7 +79,4 @@ void *kzmalloc_array(size_t nb, size_t size);
 /* conversion */
 int kstrtol(const char * restrict str, unsigned int base, long * restrict res);
 
-/* utils */
-size_t file_size(const FILE * const f);
-
 #endif /* _UTILS_H_ */

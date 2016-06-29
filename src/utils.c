@@ -68,20 +68,3 @@ int kstrtol(const char * restrict str, unsigned int base, long * restrict res)
     *res = value;
     return 0;
 }
-
-size_t file_size(const FILE * const f)
-{
-    struct stat info;
-
-    if (!f) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return 0;
-    }
-
-    if (fstat(fileno((FILE *)f), &info)) {
-        skperr("fstat() failed");
-        return 0;
-    }
-
-    return info.st_size;
-}
