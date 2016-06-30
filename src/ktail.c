@@ -14,13 +14,21 @@
 #include "ktail_config.h"
 
 #define SLEEP_INTERVALL 500
-#define MAX_LINE (sysconf(_SC_LINE_MAX) + 1)
 #ifdef HAVE_INOTIFY
 #define BUF_SIZE (1 * sizeof(struct inotify_event))
 #endif
 
-#define IDX(line, off)                          \
-    ((line) * MAX_LINE + (off))
+static size_t MAX_LINE;
+
+__attribute__((constructor)) static void init(void)
+{
+    MAX_LINE = sysconf(_SC_LINE_MAX) + 1;
+}
+
+static inline size_t idx(const size_t line, const size_t off)
+{
+    return line * MAX_LINE + off;
+}
 
 struct ktail_context *ktail_init(void)
 {
@@ -237,12 +245,12 @@ int ktail_read(struct ktail_context *ctx)
         }
 
         if (c == '\n') {
-            ctx->data[IDX(ctx->line_counter % config.n, off)] = '\0';
+            ctx->data[idx(ctx->line_counter % config.n, off)] = '\0';
             off = 0;
             ctx->line_counter++;
             continue;
         }
-        ctx->data[IDX(ctx->line_counter % config.n, off++)] = c;
+        ctx->data[idx(ctx->line_counter % config.n, off++)] = c;
     }
     if (ferror(ctx->f)) {
         skperr("fgetc() failed");
@@ -251,7 +259,7 @@ int ktail_read(struct ktail_context *ctx)
 
     /* deal with last line */
     if (off != 0)
-        ctx->data[IDX(ctx->line_counter % config.n, off)] = '\0';
+        ctx->data[idx(ctx->line_counter % config.n, off)] = '\0';
 
     return 0;
 }
@@ -289,6 +297,6 @@ void ktail_print(const struct ktail_context *ctx)
     size_t start = ctx->line_counter >= config.n ? ctx->line_counter : 0;
 
     for (size_t i = start; i < start + lines; ++i)
-        printf("%s\n", ctx->data + IDX(i % config.n, 0));
+        printf("%s\n", ctx->data + idx(i % config.n, 0));
     fflush(stdout);
 }
