@@ -18,7 +18,7 @@ void *kmalloc(size_t size)
 
 void *kmalloc_array(size_t nb, size_t size)
 {
-    const size_t MUL_NO_OVERFLOW = (size_t)1 << (sizeof(size_t) * 4);
+    static const size_t MUL_NO_OVERFLOW = (size_t)1 << (sizeof(size_t) * 4);
     void *mem;
 
     /*
