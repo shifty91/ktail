@@ -22,7 +22,12 @@ static size_t MAX_LINE;
 
 __attribute__((constructor)) static void init(void)
 {
-    MAX_LINE = sysconf(_SC_LINE_MAX) + 1;
+    long res = sysconf(_SC_LINE_MAX);
+    if (res < 0)
+        skerr("sysconf() failed");
+    if (res == 0)
+        serr("sysconf() returned 0 for _SC_LINE_MAX");
+    MAX_LINE = (size_t)res + 1;
 }
 
 static inline size_t idx(const size_t line, const size_t off)
