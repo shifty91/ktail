@@ -16,7 +16,7 @@ static struct option long_options[] = {
     { NULL    , 0                , NULL,  0  }
 };
 
-static void print_usage_and_die(void)
+__attribute__((noreturn)) static void print_usage_and_die(void)
 {
     fprintf(stderr, "ktail [options] <file>\n");
     fprintf(stderr, "options:\n");

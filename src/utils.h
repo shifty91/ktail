@@ -77,6 +77,6 @@ void *kzmalloc_array(size_t nb, size_t size);
     } while (0)
 
 /* conversion */
-int kstrtol(const char * restrict str, unsigned int base, long * restrict res);
+int kstrtol(const char * restrict str, int base, long * restrict res);
 
 #endif /* _UTILS_H_ */

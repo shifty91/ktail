@@ -50,7 +50,7 @@ void *kzmalloc_array(size_t nb, size_t size)
     return mem;
 }
 
-int kstrtol(const char * restrict str, unsigned int base, long * restrict res)
+int kstrtol(const char * restrict str, int base, long * restrict res)
 {
     char *end;
     long value;

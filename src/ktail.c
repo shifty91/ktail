@@ -13,7 +13,9 @@
 #include "config.h"
 #include "ktail_config.h"
 
+#if !defined(HAVE_INOTIFY) && !defined(HAVE_KQUEUE)
 #define SLEEP_INTERVALL 500
+#endif
 #ifdef HAVE_INOTIFY
 #define BUF_SIZE (1 * sizeof(struct inotify_event))
 #endif
@@ -111,13 +113,13 @@ int ktail_wait(struct ktail_context *ctx)
         nev = kevent(ctx->kq, &ctx->change, 1, &event, 1, NULL);
         if (nev < 0) {
             if (errno == EINTR)
-                return 0;
+                break;
             skperr("kevent() failed");
             return -ENOMEM;
         }
 
         if (event.fflags & NOTE_EXTEND || event.fflags & NOTE_WRITE)
-            return 0;
+            break;
     }
 #elif HAVE_INOTIFY
     char buf[BUF_SIZE];
@@ -129,14 +131,14 @@ int ktail_wait(struct ktail_context *ctx)
         rc = read(ctx->fd, buf, BUF_SIZE);
         if (rc == -1 || rc == 0) {
             if (errno == EINTR)
-                return 0;
+                break;
             skperr("Failed to read from inotify fd");
             return -EIO;
         }
 
         event = (struct inotify_event *)buf;
         if (event->mask & IN_MODIFY)
-            return 0;
+            break;
     }
 #else
     while (42) {
@@ -153,7 +155,7 @@ int ktail_wait(struct ktail_context *ctx)
         /* zZz */
         if (usleep(SLEEP_INTERVALL)) {
             if (errno == EINTR)
-                return 0;
+                break;
             skperr("usleep() failed");
             return -EINTR;
         }
