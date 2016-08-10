@@ -300,8 +300,8 @@ void ktail_print(const struct ktail_context *ctx)
         return;
     }
 
-    size_t lines = ctx->line_counter >= config.n ? config.n : ctx->line_counter;
-    size_t start = ctx->line_counter >= config.n ? ctx->line_counter : 0;
+    const size_t lines = ctx->line_counter >= config.n ? config.n : ctx->line_counter;
+    const size_t start = ctx->line_counter >= config.n ? ctx->line_counter : 0;
 
     for (size_t i = start; i < start + lines; ++i)
         printf("%s\n", ctx->data + idx(i % config.n, 0));
