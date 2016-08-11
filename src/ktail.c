@@ -48,10 +48,7 @@ struct ktail_context *ktail_init(void)
 
 void ktail_free(struct ktail_context *ctx)
 {
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return;
-    }
+    ASSERT_PARAM_NOT_NULL_VOID(ctx);
 
     kfree(ctx->data);
     kfree(ctx);
@@ -59,10 +56,7 @@ void ktail_free(struct ktail_context *ctx)
 
 int ktail_wait_init(struct ktail_context *ctx)
 {
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return -EINVAL;
-    }
+    ASSERT_PARAM_NOT_NULL(ctx);
 
 #ifdef HAVE_KQUEUE
     ctx->fd = open(config.file, O_RDONLY);
@@ -99,10 +93,7 @@ int ktail_wait_init(struct ktail_context *ctx)
 
 int ktail_wait(struct ktail_context *ctx)
 {
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return -EINVAL;
-    }
+    ASSERT_PARAM_NOT_NULL(ctx);
 
 #ifdef HAVE_KQUEUE
     struct kevent event;
@@ -167,10 +158,7 @@ int ktail_wait(struct ktail_context *ctx)
 
 void ktail_wait_close(struct ktail_context *ctx)
 {
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return;
-    }
+    ASSERT_PARAM_NOT_NULL_VOID(ctx);
 
 #ifdef HAVE_KQUEUE
     close(ctx->kq);
@@ -183,10 +171,7 @@ void ktail_wait_close(struct ktail_context *ctx)
 
 int ktail_open(struct ktail_context *ctx)
 {
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return -EINVAL;
-    }
+    ASSERT_PARAM_NOT_NULL(ctx);
 
     if (!(ctx->f = fopen(config.file, "r"))) {
         skperr("fopen() failed");
@@ -198,10 +183,7 @@ int ktail_open(struct ktail_context *ctx)
 
 int ktail_reopen(struct ktail_context *ctx)
 {
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return -EINVAL;
-    }
+    ASSERT_PARAM_NOT_NULL(ctx);
 
     fclose(ctx->f);
 
@@ -221,10 +203,8 @@ int ktail_reopen(struct ktail_context *ctx)
 
 void ktail_close(struct ktail_context *ctx)
 {
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return;
-    }
+    ASSERT_PARAM_NOT_NULL_VOID(ctx);
+
     fclose(ctx->f);
 }
 
@@ -233,10 +213,7 @@ int ktail_read(struct ktail_context *ctx)
     size_t off = 0;
     int c;
 
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return -EINVAL;
-    }
+    ASSERT_PARAM_NOT_NULL(ctx);
 
     while ((c = fgetc(ctx->f)) != EOF) {
         ctx->bytes++;
@@ -275,10 +252,7 @@ int ktail_read_and_print(struct ktail_context *ctx)
 {
     int c;
 
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return -EINVAL;
-    }
+    ASSERT_PARAM_NOT_NULL(ctx);
 
     while ((c = fgetc(ctx->f)) != EOF) {
         ctx->bytes++;
@@ -295,10 +269,7 @@ int ktail_read_and_print(struct ktail_context *ctx)
 
 void ktail_print(const struct ktail_context *ctx)
 {
-    if (!ctx) {
-        perr("NULL pointer passed to '%s'", __func__);
-        return;
-    }
+    ASSERT_PARAM_NOT_NULL_VOID(ctx);
 
     const size_t lines = ctx->line_counter >= config.n ? config.n : ctx->line_counter;
     const size_t start = ctx->line_counter >= config.n ? ctx->line_counter : 0;

@@ -7,6 +7,25 @@
 #include <errno.h>
 #include <libgen.h>
 
+/* asserts */
+#define ASSERT_PARAM_NOT_NULL(param)                            \
+    do {                                                        \
+        if (!(param)) {                                         \
+            perr("'%s': NULL pointer passed to '%s'", #param,   \
+                 __func__);                                     \
+            return -EINVAL;                                     \
+        }                                                       \
+    } while (0)
+
+#define ASSERT_PARAM_NOT_NULL_VOID(param)                       \
+    do {                                                        \
+        if (!(param)) {                                         \
+            perr("'%s': NULL pointer passed to '%s'", #param,   \
+                 __func__);                                     \
+            return;                                             \
+        }                                                       \
+    } while (0)
+
 /* printing */
 #ifndef NDEBUG
 #define dbg(fmt, ...)                                                   \
