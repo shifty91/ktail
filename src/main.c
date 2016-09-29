@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <signal.h>
+#include <sys/stat.h>
 
 #include "config.h"
 #include "utils.h"
@@ -31,6 +32,17 @@ static void term_handler(int sig)
 {
     (void)sig;
     stop = 1;
+}
+
+static int is_tailable(const char *file)
+{
+    struct stat sb;
+
+    /* follow symlinks */
+    if (stat(file, &sb))
+        skerr("stat() failed");
+
+    return S_ISREG(sb.st_mode);
 }
 
 static void setup_signals(void)
@@ -140,6 +152,10 @@ int main(int argc, char *argv[])
     if (number_str && (kstrtol(number_str, 10, &n) || n <= 0))
         serr("Invalid argument for --number");
     config.n = n;
+
+    /* sanity checks */
+    if (!is_tailable(config.file))
+        err("The file '%s' cannot be tailed.", config.file);
 
     /* print tail */
     if (config.f_flag) {
