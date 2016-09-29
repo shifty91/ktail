@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 struct config {
-    char *file;
+    const char *file;
     size_t n;
     int f_flag;
 };
