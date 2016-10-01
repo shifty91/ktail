@@ -8,80 +8,23 @@
 #include <libgen.h>
 
 /* asserts */
-#define ASSERT_PARAM_NOT_NULL(param)                            \
-    do {                                                        \
-        if (!(param)) {                                         \
-            perr("'%s': NULL pointer passed to '%s'", #param,   \
-                 __func__);                                     \
-            return -EINVAL;                                     \
-        }                                                       \
+#define ASSERT_PARAM_NOT_NULL(param)                                \
+    do {                                                            \
+        if (!(param)) {                                             \
+            print_err("'%s': NULL pointer passed to '%s'", #param,  \
+                      __func__);                                    \
+            return -EINVAL;                                         \
+        }                                                           \
     } while (0)
 
-#define ASSERT_PARAM_NOT_NULL_VOID(param)                       \
-    do {                                                        \
-        if (!(param)) {                                         \
-            perr("'%s': NULL pointer passed to '%s'", #param,   \
-                 __func__);                                     \
-            return;                                             \
-        }                                                       \
+#define ASSERT_PARAM_NOT_NULL_VOID(param)                           \
+    do {                                                            \
+        if (!(param)) {                                             \
+            print_err("'%s': NULL pointer passed to '%s'", #param,  \
+                      __func__);                                    \
+            return;                                                 \
+        }                                                           \
     } while (0)
-
-/* printing */
-#ifndef NDEBUG
-#define dbg(fmt, ...)                                                   \
-    do {                                                                \
-        printf("[DEBUG %s:%d]: " fmt "\n", basename(__FILE__),          \
-               __LINE__, ##__VA_ARGS__);                                \
-    } while (0)
-#define sdbg(str) dbg("%s", str)
-#else
-#define dbg(fmt, ...)
-#define sdbg(str)
-#endif
-
-#define info(fmt, ...)                                                  \
-    do {                                                                \
-        printf("[INFO %s:%d]: " fmt "\n", basename(__FILE__), __LINE__, \
-               ##__VA_ARGS__);                                          \
-    } while (0)
-#define sinfo(str) info("%s", str)
-
-#define warn(fmt, ...)                                                  \
-    do {                                                                \
-        fprintf(stderr, "[WARN %s:%d]: " fmt "\n", basename(__FILE__),  \
-                __LINE__, ##__VA_ARGS__);                               \
-    } while (0)
-#define swarn(str) warn("%s", str)
-
-#define kerr(fmt, ...)                                                  \
-    do {                                                                \
-        fprintf(stderr, "[ERROR %s:%d]: " fmt ": %s\n", basename(__FILE__), \
-                __LINE__, ##__VA_ARGS__, strerror(errno));              \
-        exit(EXIT_FAILURE);                                             \
-    } while (0)
-#define skerr(str) kerr("%s", str)
-
-#define err(fmt, ...)                                                   \
-    do {                                                                \
-        fprintf(stderr, "[ERROR %s:%d]: " fmt "\n", basename(__FILE__), \
-                __LINE__, ##__VA_ARGS__);                               \
-        exit(EXIT_FAILURE);                                             \
-    } while (0)
-#define serr(str) err("%s", str)
-
-#define kperr(fmt, ...)                                                 \
-    do {                                                                \
-        fprintf(stderr, "[ERROR %s:%d]: " fmt ": %s\n", basename(__FILE__), \
-                __LINE__, ##__VA_ARGS__, strerror(errno));              \
-    } while (0)
-#define skperr(str) kperr("%s", str)
-
-#define perr(fmt, ...)                                                  \
-    do {                                                                \
-        fprintf(stderr, "[ERROR %s:%d]: " fmt "\n", basename(__FILE__), \
-                __LINE__, ##__VA_ARGS__);                               \
-    } while (0)
-#define sperr(str) perr("%s", str)
 
 /* memory allocations */
 void *kmalloc(size_t size);
@@ -97,5 +40,53 @@ void *kzmalloc_array(size_t nb, size_t size);
 
 /* conversion */
 int kstrtol(const char * restrict str, int base, long * restrict res);
+
+/* logging */
+#define err(...)                                                        \
+    do {                                                                \
+        _log("ERROR", 1, 0, basename(__FILE__), __LINE__, __VA_ARGS__); \
+    } while (0)
+
+#define print_err(...)                                                  \
+    do {                                                                \
+        _log("ERROR", 0, 0, basename(__FILE__), __LINE__, __VA_ARGS__); \
+    } while (0)
+
+#define err_errno(...)                                                  \
+    do {                                                                \
+        _log("ERROR", 1, 1, basename(__FILE__), __LINE__, __VA_ARGS__); \
+    } while (0)
+
+#define print_err_errno(...)                                            \
+    do {                                                                \
+        _log("ERROR", 0, 1, basename(__FILE__), __LINE__, __VA_ARGS__); \
+    } while (0)
+
+#define warn(...)                                                       \
+    do {                                                                \
+        _log("WARN", 0, 0, basename(__FILE__), __LINE__, __VA_RGS__);   \
+    } while (0)
+
+#define warn_errno(...)                                                 \
+    do {                                                                \
+        _log("WARN", 0, 1, basename(__FILE__), __LINE__, __VA_ARGS__);  \
+    } while (0)
+
+#define info(...)                                                       \
+    do {                                                                \
+        _log("INFO", 0, 0, basename(__FILE__), __LINE__, __VA_ARGS__);  \
+    } while (0)
+
+#ifndef NDEBUG
+#define dbg(...)                                                        \
+    do {                                                                \
+        _log("DEBUG", 0, 0, basename(__FILE__), __LINE__, __VA_ARGS__); \
+    } while (0)
+#else
+#define dbg(...)
+#endif
+
+void _log(const char * restrict level, int die, int with_errno,
+          const char * restrict file, int line, const char * restrict fmt, ...);
 
 #endif /* _UTILS_H_ */

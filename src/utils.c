@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -12,7 +13,7 @@ void *kmalloc(size_t size)
 {
     void *mem = malloc(size);
     if (!mem)
-        skerr("malloc() failed");
+        err_errno("malloc() failed");
     return mem;
 }
 
@@ -28,11 +29,11 @@ void *kmalloc_array(size_t nb, size_t size)
      */
     if ((nb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
         nb > 0 && SIZE_MAX / nb < size)
-        serr("kmalloc_array() failed: overflow detected.");
+        err("kmalloc_array() failed: overflow detected.");
 
     mem = malloc(nb * size);
     if (!mem)
-        skerr("malloc() failed");
+        err_errno("malloc() failed");
     return mem;
 }
 
@@ -56,7 +57,7 @@ int kstrtol(const char * restrict str, int base, long * restrict res)
     long value;
 
     if (!str || !res) {
-        perr("NULL pointer(s) passed to '%s'", __func__);
+        print_err("NULL pointer(s) passed to '%s'", __func__);
         return -EINVAL;
     }
 
@@ -67,4 +68,30 @@ int kstrtol(const char * restrict str, int base, long * restrict res)
 
     *res = value;
     return 0;
+}
+
+void _log(const char * restrict level, int die, int with_errno,
+          const char * restrict file, int line, const char * restrict fmt, ...)
+{
+    FILE *out;
+    va_list args;
+
+    va_start(args, fmt);
+
+    if (!strcmp(level, "ERROR") || !strcmp(level, "WARN"))
+        out = stderr;
+    else
+        out = stdout;
+
+    fprintf(out, "[%s %s:%d]: ", level, file, line);
+    vfprintf(out, fmt, args);
+    if (with_errno)
+        fprintf(out, ": %s", strerror(errno));
+    fprintf(out, "\n");
+    fflush(out);
+
+    va_end(args);
+
+    if (die)
+        exit(EXIT_FAILURE);
 }

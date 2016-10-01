@@ -40,7 +40,7 @@ static int is_tailable(const char *file)
 
     /* follow symlinks */
     if (stat(file, &sb))
-        skerr("stat() failed");
+        err_errno("stat() failed");
 
     return S_ISREG(sb.st_mode);
 }
@@ -54,9 +54,9 @@ static void setup_signals(void)
     sa.sa_flags = 0;
 
     if (sigaction(SIGTERM, &sa, NULL))
-        skerr("sigaction() failed");
+        err_errno("sigaction() failed");
     if (sigaction(SIGINT, &sa, NULL))
-        skerr("sigaction() failed");
+        err_errno("sigaction() failed");
 }
 
 static int ktail(void)
@@ -150,7 +150,7 @@ int main(int argc, char *argv[])
     /* set args */
     config.file = argv[optind];
     if (number_str && (kstrtol(number_str, 10, &n) || n <= 0))
-        serr("Invalid argument for --number");
+        err("Invalid argument for --number");
     config.n = n;
 
     /* sanity checks */

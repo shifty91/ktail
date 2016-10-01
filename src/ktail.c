@@ -26,9 +26,9 @@ __attribute__((constructor)) static void init(void)
 {
     long res = sysconf(_SC_LINE_MAX);
     if (res < 0)
-        skerr("sysconf() failed");
+        err_errno("sysconf() failed");
     if (res == 0)
-        serr("sysconf() returned 0 for _SC_LINE_MAX");
+        err("sysconf() returned 0 for _SC_LINE_MAX");
     MAX_LINE = (size_t)res + 1;
 }
 
@@ -61,13 +61,13 @@ int ktail_wait_init(struct ktail_context *ctx)
 #ifdef HAVE_KQUEUE
     ctx->fd = open(config.file, O_RDONLY);
     if (ctx->fd < 0) {
-        skperr("open() failed");
+        print_err_errno("open() failed");
         return -EIO;
     }
 
     ctx->kq = kqueue();
     if (ctx->kq < 0) {
-        skperr("kqueue() failed");
+        print_err_errno("kqueue() failed");
         return -ENOMEM;
     }
 
@@ -78,12 +78,12 @@ int ktail_wait_init(struct ktail_context *ctx)
 #elif HAVE_INOTIFY
     ctx->fd = inotify_init();
     if (ctx->fd < 0) {
-        skperr("inotify_init() failed");
+        print_err_errno("inotify_init() failed");
         return -ENOMEM;
     }
     ctx->wd = inotify_add_watch(ctx->fd, config.file, IN_MODIFY);
     if (ctx->wd < 0) {
-        skperr("inotify_add_watch() failed");
+        print_err_errno("inotify_add_watch() failed");
         return -ENOMEM;
     }
 #endif
@@ -105,7 +105,7 @@ int ktail_wait(struct ktail_context *ctx)
         if (nev < 0) {
             if (errno == EINTR)
                 break;
-            skperr("kevent() failed");
+            print_err_errno("kevent() failed");
             return -ENOMEM;
         }
 
@@ -123,7 +123,7 @@ int ktail_wait(struct ktail_context *ctx)
         if (rc == -1 || rc == 0) {
             if (errno == EINTR)
                 break;
-            skperr("Failed to read from inotify fd");
+            print_err_errno("Failed to read from inotify fd");
             return -EIO;
         }
 
@@ -136,7 +136,7 @@ int ktail_wait(struct ktail_context *ctx)
         struct stat buf;
 
         if (stat(config.file, &buf)) {
-            skperr("lstat() failed");
+            print_err_errno("lstat() failed");
             return -EIO;
         }
 
@@ -147,7 +147,7 @@ int ktail_wait(struct ktail_context *ctx)
         if (usleep(SLEEP_INTERVALL)) {
             if (errno == EINTR)
                 break;
-            skperr("usleep() failed");
+            print_err_errno("usleep() failed");
             return -EINTR;
         }
     }
@@ -174,7 +174,7 @@ int ktail_open(struct ktail_context *ctx)
     ASSERT_PARAM_NOT_NULL(ctx);
 
     if (!(ctx->f = fopen(config.file, "r"))) {
-        skperr("fopen() failed");
+        print_err_errno("fopen() failed");
         return -EIO;
     }
 
@@ -188,13 +188,13 @@ int ktail_reopen(struct ktail_context *ctx)
     fclose(ctx->f);
 
     if (!(ctx->f = fopen(config.file, "r"))) {
-        skperr("fopen() failed");
+        print_err_errno("fopen() failed");
         return -EIO;
     }
 
     /* seek! */
     if (fseek(ctx->f, ctx->bytes, SEEK_SET)) {
-        skperr("fseek() failed");
+        print_err_errno("fseek() failed");
         return -EINVAL;
     }
 
@@ -220,8 +220,8 @@ int ktail_read(struct ktail_context *ctx)
 
         /* length check */
         if (off == (MAX_LINE - 1)) {
-            perr("Length of line '%lu' is too long. Cutting it.",
-                 ctx->line_counter);
+            print_err("Length of line '%lu' is too long. Cutting it.",
+                      ctx->line_counter);
 
             /* read until eol */
             while ((c = fgetc(ctx->f)) != '\n')
@@ -237,7 +237,7 @@ int ktail_read(struct ktail_context *ctx)
         ctx->data[idx(ctx->line_counter % config.n, off++)] = c;
     }
     if (ferror(ctx->f)) {
-        skperr("fgetc() failed");
+        print_err_errno("fgetc() failed");
         return -EIO;
     }
 
@@ -260,7 +260,7 @@ int ktail_read_and_print(struct ktail_context *ctx)
     }
     fflush(stdout);
     if (ferror(ctx->f)) {
-        skperr("fgetc() failed");
+        print_err_errno("fgetc() failed");
         return -EIO;
     }
 
