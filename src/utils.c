@@ -19,19 +19,13 @@ void *kmalloc(size_t size)
 
 void *kmalloc_array(size_t nb, size_t size)
 {
-    static const size_t MUL_NO_OVERFLOW = (size_t)1 << (sizeof(size_t) * 4);
+    size_t alloc_size;
     void *mem;
 
-    /*
-     * Overflow check.
-     * Taken from OpenBSD's reallocarray function:
-     * http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/lib/libc/stdlib/reallocarray.c?rev=1.3&content-type=text/x-cvsweb-markup
-     */
-    if ((nb >= MUL_NO_OVERFLOW || size >= MUL_NO_OVERFLOW) &&
-        nb > 0 && SIZE_MAX / nb < size)
+    if (__builtin_umull_overflow(nb, size, &alloc_size))
         err("kmalloc_array() failed: overflow detected.");
 
-    mem = malloc(nb * size);
+    mem = malloc(alloc_size);
     if (!mem)
         err_errno("malloc() failed");
     return mem;
