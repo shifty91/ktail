@@ -224,8 +224,15 @@ int ktail_read(struct ktail_context *ctx)
                       ctx->line_counter);
 
             /* read until eol */
-            while ((c = fgetc(ctx->f)) != '\n')
-                ;
+            while ((c = fgetc(ctx->f)) != EOF) {
+                ctx->bytes++;
+                if (c == '\n')
+                    break;
+            }
+            if (ferror(ctx->f)) {
+                print_err_errno("fgetc() failed");
+                return -EIO;
+            }
         }
 
         if (c == '\n') {
