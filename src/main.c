@@ -25,7 +25,7 @@ __attribute__((noreturn)) static void print_usage_and_die(int ret)
     fprintf(stderr, "options:\n");
     fprintf(stderr, "  --number, -n <lines>: last <lines> lines\n");
     fprintf(stderr, "  --follow, -f: follow output\n");
-    fprintf(stderr, "Ktail version 1.2, Copyright (C) 2016 Kurt Kanzenbach <kurt@kmk-computers.de>\n");
+    fprintf(stderr, "Ktail version 1.3, Copyright (C) 2016 Kurt Kanzenbach <kurt@kmk-computers.de>\n");
 
     ret ? exit(EXIT_FAILURE) : exit(EXIT_SUCCESS);
 }
