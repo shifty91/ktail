@@ -12,12 +12,14 @@
 static volatile int stop;
 
 static struct option long_options[] = {
-    { "number", required_argument, NULL, 'n' },
-    { "follow", no_argument      , NULL, 'f' },
-    { NULL    , 0                , NULL,  0  }
+    { "number" , required_argument, NULL, 'n' },
+    { "follow" , no_argument      , NULL, 'f' },
+    { "version", no_argument      , NULL, 'v' },
+    { "help"   , no_argument      , NULL, 'h' },
+    { NULL     , 0                , NULL,  0  }
 };
 
-__attribute__((noreturn)) static void print_usage_and_die(void)
+__attribute__((noreturn)) static void print_usage_and_die(int ret)
 {
     fprintf(stderr, "ktail [options] <file>\n");
     fprintf(stderr, "options:\n");
@@ -25,7 +27,7 @@ __attribute__((noreturn)) static void print_usage_and_die(void)
     fprintf(stderr, "  --follow, -f: follow output\n");
     fprintf(stderr, "Ktail version 1.2, Copyright (C) 2016 Kurt Kanzenbach <kurt@kmk-computers.de>\n");
 
-    exit(EXIT_FAILURE);
+    ret ? exit(EXIT_FAILURE) : exit(EXIT_SUCCESS);
 }
 
 static void term_handler(int sig)
@@ -140,12 +142,15 @@ int main(int argc, char *argv[])
         case 'f':
             config.f_flag = 1;
             break;
+        case 'v':
+        case 'h':
+            print_usage_and_die(0);
         default:
-            print_usage_and_die();
+            print_usage_and_die(1);
         }
     }
     if (argc - optind != 1)
-        print_usage_and_die();
+        print_usage_and_die(1);
 
     /* set args */
     config.file = argv[optind];
