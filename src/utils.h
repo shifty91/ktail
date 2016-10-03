@@ -31,11 +31,11 @@ void *kmalloc(size_t size);
 void *kzmalloc(size_t size);
 void *kmalloc_array(size_t nb, size_t size);
 void *kzmalloc_array(size_t nb, size_t size);
+void _free(void **ptr);
 
 #define kfree(ptr)                                                      \
     do {                                                                \
-        free(ptr);                                                      \
-        ptr = NULL;                                                     \
+        _free((void **)&(ptr));                                         \
     } while (0)
 
 /* conversion */
