@@ -64,7 +64,7 @@ int kstrtol(const char * restrict str, int base, long * restrict res);
 
 #define warn(...)                                                       \
     do {                                                                \
-        _log("WARN", 0, 0, basename(__FILE__), __LINE__, __VA_ARGS__);   \
+        _log("WARN", 0, 0, basename(__FILE__), __LINE__, __VA_ARGS__);  \
     } while (0)
 
 #define warn_errno(...)                                                 \
