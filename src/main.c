@@ -182,11 +182,7 @@ int main(int argc, char *argv[])
         err("The file '%s' cannot be tailed.", config.file);
 
     /* print tail */
-    if (config.f_flag) {
-        res = ktail_with_follow();
-    } else {
-        res = ktail();
-    }
+    res = config.f_flag ? ktail_with_follow() : ktail();
 
     return res ? EXIT_FAILURE : EXIT_SUCCESS;
 }
