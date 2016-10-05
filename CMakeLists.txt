@@ -23,9 +23,5 @@ include_directories("${PROJECT_BINARY_DIR}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -pedantic -Wall -march=native")
 set(CMAKE_BUILD_TYPE "Release")
 
-if ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-gnu-zero-variadic-macro-arguments")
-endif()
-
 add_executable(ktail ${SRCS})
 install(TARGETS ktail DESTINATION bin COMPONENT binaries)
