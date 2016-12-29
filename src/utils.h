@@ -58,7 +58,7 @@ void _free(void **ptr);
     } while (0)
 
 /* conversion */
-int kstrtol(const char * restrict str, int base, long * restrict res);
+int kstrtol(const char *str, int base, long *res);
 
 /* logging */
 #define err(...)                                                        \
@@ -105,7 +105,7 @@ int kstrtol(const char * restrict str, int base, long * restrict res);
 #define dbg(...)
 #endif
 
-void _log(const char * restrict level, int die, int with_errno,
-          const char * restrict file, int line, const char * restrict fmt, ...);
+void _log(const char *restrict level, int die, int with_errno,
+          const char *restrict file, int line, const char *restrict fmt, ...);
 
 #endif /* _UTILS_H_ */
