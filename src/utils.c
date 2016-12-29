@@ -28,6 +28,8 @@
 
 #include "utils.h"
 
+#include "ktail_config.h"
+
 void *kmalloc(size_t size)
 {
     void *mem = malloc(size);
@@ -38,11 +40,18 @@ void *kmalloc(size_t size)
 
 void *kmalloc_array(size_t nb, size_t size)
 {
-    size_t alloc_size;
+    size_t alloc_size = 0;
     void *mem;
 
+#ifdef HAVE_BUILTIN_UMULL_OVERFLOW
     if (__builtin_umull_overflow(nb, size, &alloc_size))
         err("kmalloc_array() failed: overflow detected.");
+#else
+    if (size && nb > SIZE_MAX / size)
+        err("kmalloc_array() failed: overflow detected.");
+    else
+        alloc_size = nb * size;
+#endif
 
     mem = malloc(alloc_size);
     if (!mem)

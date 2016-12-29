@@ -10,8 +10,14 @@ set(SRCS
 
 # checks
 include(CheckFunctionExists)
+include(CheckCSourceCompiles)
 check_function_exists(kqueue HAVE_KQUEUE)
 check_function_exists(inotify_init HAVE_INOTIFY)
+check_c_source_compiles("int main(void) {
+  unsigned long a, b, c;
+  __builtin_umull_overflow(a, b, &c);
+  return 0;
+}" HAVE_BUILTIN_UMULL_OVERFLOW)
 
 # config file
 configure_file(
