@@ -79,7 +79,7 @@ void _free(void **ptr)
     *ptr = NULL;
 }
 
-int kstrtol(const char * restrict str, int base, long * restrict res)
+int kstrtol(const char *str, int base, long *res)
 {
     char *end;
     long value;
@@ -98,8 +98,8 @@ int kstrtol(const char * restrict str, int base, long * restrict res)
     return 0;
 }
 
-void _log(const char * restrict level, int die, int with_errno,
-          const char * restrict file, int line, const char * restrict fmt, ...)
+void _log(const char *restrict level, int die, int with_errno,
+          const char *restrict file, int line, const char *restrict fmt, ...)
 {
     FILE *out;
     va_list args;
