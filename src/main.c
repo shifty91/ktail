@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
     int c, res;
 
     /* get args */
-    while ((c = getopt_long(argc, argv, "n:f", long_options, NULL)) != -1) {
+    while ((c = getopt_long(argc, argv, "n:fvh", long_options, NULL)) != -1) {
         switch (c) {
         case 'n':
             number_str = optarg;
